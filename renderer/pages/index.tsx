@@ -1,25 +1,67 @@
-import React from 'react'
-import Head from 'next/head'
-import Link from 'next/link'
-import Image from 'next/image'
+import React, { useState } from 'react';
+import NoteCard from '../components/NoteCard';
+import { title } from 'process';
 
-export default function HomePage() {
+const Home: React.FC = () => {
+  const [notes, setNotes] = useState([
+    { id: 1, title: 'Note 1', content: 'This is the first note.' },
+    { id: 2, title: 'Note 2', content: 'This is the second note.' },
+  ]);
+
+  const [newNote, setNewNote] = useState({
+    title: '',
+    content: ''
+  });
+
+  // function for creating new note
+  const addNote = () => {
+    if (newNote.title && newNote.content) {
+      setNotes([
+        ...notes,
+        {
+          id: notes.length + 1,
+          title: newNote.title,
+          content: newNote.content,
+        },
+      ]);
+      setNewNote({ title: '', content: '' }); // Clear form
+    }
+  }
+
   return (
-    <React.Fragment>
-      <div className="grid grid-col-1 text-2xl w-full text-center">
-        <div>
-          <Image
-            className="ml-auto mr-auto"
-            src="/images/logo.png"
-            alt="Logo image"
-            width={256}
-            height={256}
-          />
-        </div>
+    <div className="p-8 min-h-screen text-white">
+      <h1 className="text-3xl font-bold mb-6">Notes App</h1>
+
+      <div className="mb-6 flex space-x-4">
+        <input
+          type="text"
+          placeholder="Title"
+          value={newNote.title}
+          onChange={(e) => setNewNote({ ...newNote, title: e.target.value })}
+          className="border border-gray-300 rounded-md p-2 w-1/3 text-black"
+        />
+        <input
+          type="text"
+          placeholder="Content"
+          value={newNote.content}
+          onChange={(e) => setNewNote({ ...newNote, content: e.target.value })}
+          className="border border-gray-300 rounded-md p-2 w-1/3 text-black"
+        />
+        <button
+          onClick={addNote}
+          className="bg-white px-4 py-2 rounded-md hover:bg-gray-100"
+        >
+          Add Note
+        </button>
       </div>
-      <div className="mt-1 w-full flex-wrap flex justify-center">
-        <Link href="/next">Go to next page</Link>
+
+      <div>
+        {notes.map((note) => (
+          <NoteCard key={note.id} title={note.title} content={note.content} />
+        ))}
       </div>
-    </React.Fragment>
-  )
-}
+    </div>
+  );
+};
+
+export default Home;
