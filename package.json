@@ -1,12 +1,12 @@
 {
   "private": true,
-  "name": "my-nextron-app",
-  "description": "My application description",
+  "name": "notes-app",
+  "description": "Simple notes app",
   "version": "1.0.0",
   "author": "Yoshihide Shiono <shiono.yoshihide@gmail.com>",
   "main": "app/background.js",
   "scripts": {
-    "dev": "nextron",
+    "dev": "nextron  --renderer-port 3000",
     "build": "nextron build",
     "postinstall": "electron-builder install-app-deps",
     "lint": "eslint .",
