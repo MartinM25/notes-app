@@ -1,11 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import NoteCard from '../components/NoteCard';
 
-const Home: React.FC = () => {
-  const [notes, setNotes] = useState<{ id: number; title: string; content: string }[]>([]);
-  const [newNote, setNewNote] = useState({ title: '', content: '' });
-  const [editNote, setEditNote] = useState<{ id: number; title: string; content: string } | null>(null);
+type Note = {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
+const Home: React.FC = () => {
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [newNote, setNewNote] = useState({ title: '', content: '' });
+  const [editNote, setEditNote] = useState<Note | null>(null);
+
+  // Function to generate a unique ID
+  const generateId = () => crypto.randomUUID();
 
   // Load notes from localStorage when the app starts
   useEffect(() => {
@@ -23,12 +33,15 @@ const Home: React.FC = () => {
   // Add a new note
   const addNote = () => {
     if (newNote.title && newNote.content) {
+      const now = new Date().toISOString();
       setNotes([
         ...notes,
         {
-          id: notes.length + 1,
+          id: generateId(),
           title: newNote.title,
           content: newNote.content,
+          createdAt: now,
+          updatedAt: now,
         },
       ]);
       setNewNote({ title: '', content: '' }); // Clear form
@@ -36,7 +49,7 @@ const Home: React.FC = () => {
   };
 
   // Delete a note
-  const deleteNote = (id: number) => {
+  const deleteNote = (id: string) => {
     setNotes(notes.filter((note) => note.id !== id));
   };
 
@@ -46,11 +59,16 @@ const Home: React.FC = () => {
       setNotes(
         notes.map((note) =>
           note.id === editNote.id
-            ? { ...note, title: editNote.title, content: editNote.content }
+            ? {
+                ...note,
+                title: editNote.title,
+                content: editNote.content,
+                updatedAt: new Date().toISOString(),
+              }
             : note
         )
       );
-      setEditNote(null); // Clear edit state
+      setEditNote(null);
     }
   };
 
@@ -118,6 +136,8 @@ const Home: React.FC = () => {
             key={note.id}
             title={note.title}
             content={note.content}
+            createdAt={note.createdAt}
+            updatedAt={note.updatedAt}
             onDelete={() => deleteNote(note.id)}
             onEdit={() => setEditNote(note)}
           />
