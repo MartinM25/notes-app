@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import NoteCard from '../components/NoteCard';
-import { title } from 'process';
 
 const Home: React.FC = () => {
   const [notes, setNotes] = useState([
@@ -25,7 +24,12 @@ const Home: React.FC = () => {
         },
       ]);
       setNewNote({ title: '', content: '' }); // Clear form
-    }
+    };
+  };
+
+  // function for deleting a note
+  const deleteNote = (id: number) => {
+    setNotes(notes.filter((note) => note.id !== id));
   }
 
   return (
@@ -38,18 +42,18 @@ const Home: React.FC = () => {
           placeholder="Title"
           value={newNote.title}
           onChange={(e) => setNewNote({ ...newNote, title: e.target.value })}
-          className="border border-gray-300 rounded-md p-2 w-1/3 text-black"
+          className="border border-gray-300 rounded-md p-2 w-1/3 text-gray-95"
         />
         <input
           type="text"
           placeholder="Content"
           value={newNote.content}
           onChange={(e) => setNewNote({ ...newNote, content: e.target.value })}
-          className="border border-gray-300 rounded-md p-2 w-1/3 text-black"
+          className="border border-gray-300 rounded-md p-2 w-1/3 text-gray-950"
         />
         <button
           onClick={addNote}
-          className="bg-white px-4 py-2 rounded-md hover:bg-gray-100"
+          className="bg-white px-4 text-gray-950 py-2 rounded-md hover:bg-gray-100"
         >
           Add Note
         </button>
@@ -57,7 +61,12 @@ const Home: React.FC = () => {
 
       <div>
         {notes.map((note) => (
-          <NoteCard key={note.id} title={note.title} content={note.content} />
+          <NoteCard 
+            key={note.id} 
+            title={note.title} 
+            content={note.content} 
+            onDelete={() => deleteNote(note.id)}  
+          />
         ))}
       </div>
     </div>

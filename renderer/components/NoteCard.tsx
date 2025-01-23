@@ -3,9 +3,10 @@ import React from 'react';
 type NoteCardProps = {
   title: string;
   content: string;
+  onDelete: () => void;
 };
 
-const NoteCard: React.FC<NoteCardProps> = ({ title, content}) => {
+const NoteCard: React.FC<NoteCardProps> = ({ title, content, onDelete }) => {
   return (
     <div className='border border-gray-300 rounded-md p-4 mb-4 shadow-sm'>
       <h3 className='text-lg font-bold text-gray-800'>
@@ -14,8 +15,14 @@ const NoteCard: React.FC<NoteCardProps> = ({ title, content}) => {
       <p className='text-gray-600 mt-2'>
         {content}
       </p>
+      <button
+        onClick={onDelete}
+        className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+      >
+        Delete
+      </button>
     </div>
-  )
-}
+  );
+};
 
 export default NoteCard;
