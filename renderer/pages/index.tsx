@@ -1,14 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import NoteCard from '../components/NoteCard';
 
 const Home: React.FC = () => {
-  const [notes, setNotes] = useState([
-    { id: 1, title: 'Note 1', content: 'This is the first note.' },
-    { id: 2, title: 'Note 2', content: 'This is the second note.' },
-  ]);
-
+  const [notes, setNotes] = useState<{ id: number; title: string; content: string }[]>([]);
   const [newNote, setNewNote] = useState({ title: '', content: '' });
   const [editNote, setEditNote] = useState<{ id: number; title: string; content: string } | null>(null);
+
+
+  // Load notes from localStorage when the app starts
+  useEffect(() => {
+    const savedNotes = localStorage.getItem('notes');
+    if (savedNotes) {
+      setNotes(JSON.parse(savedNotes));
+    }
+  }, []);
+
+  // Save notes to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('notes', JSON.stringify(notes));
+  }, [notes]);
 
   // Add a new note
   const addNote = () => {
