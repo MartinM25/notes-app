@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
+import Button from './Button';
 
 type NoteModalProps = {
   isOpen: boolean;
@@ -81,20 +82,20 @@ const NoteModal: React.FC<NoteModalProps> = ({
                 </div>
 
                 <div className="mt-6 flex justify-end space-x-2">
-                  <button
-                    type="button"
+                  <Button
+                    size='md'
                     className="inline-flex justify-center rounded-md border border-transparent bg-gray-500 px-4 py-2 text-sm font-medium text-white hover:bg-gray-600"
                     onClick={onClose}
                   >
                     Cancel
-                  </button>
-                  <button
-                    type="button"
+                  </Button>
+                  <Button
+                    size='md'
                     className="inline-flex justify-center rounded-md border border-transparent bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600"
                     onClick={handleSave}
                   >
                     Save
-                  </button>
+                  </Button>
                 </div>
               </Dialog.Panel>
             </Transition.Child>
