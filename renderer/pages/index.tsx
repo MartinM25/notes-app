@@ -37,7 +37,7 @@ const Home: React.FC = () => {
         title,
         content,
         createdAt: now,
-        updatedAt: now,
+        updatedAt: null,
       };
       saveNotesToFile([...notes, newNote]);
     }

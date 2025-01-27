@@ -69,13 +69,13 @@ const NoteModal: FC<NoteModalProps> = ({
                     placeholder="Title"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="border border-gray-300 rounded-md p-2 w-full mb-4"
+                    className="border border-gray-300 rounded-md p-2 w-full mb-4 text-gray-950"
                   />
                   <textarea
                     placeholder="Content"
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
-                    className="border border-gray-300 rounded-md p-2 w-full h-24"
+                    className="border border-gray-300 rounded-md p-2 w-full h-24 text-gray-950"
                   />
                 </div>
 

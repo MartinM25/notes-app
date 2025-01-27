@@ -3,6 +3,14 @@ import { NoteCardProps } from '../types';
 import Button from './Button';
 
 const NoteCard: React.FC<NoteCardProps> = ({ title, content, createdAt, updatedAt, onDelete, onEdit }) => {
+  const formatDate = (date: string) => {
+    return new Date(date).toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
+  };
+
   return (
     <div className='border border-gray-300 rounded-md p-4 mb-4 shadow-sm'>
       <h3 className='text-lg font-bold text-gray-800'>
@@ -11,8 +19,9 @@ const NoteCard: React.FC<NoteCardProps> = ({ title, content, createdAt, updatedA
       <p className='text-gray-600 mt-2'>
         {content}
       </p>
-      <p className="text-gray-500 text-sm mt-4">Created: {new Date(createdAt).toLocaleString()}</p>
-      <p className="text-gray-500 text-sm">Updated: {new Date(updatedAt).toLocaleString()}</p>
+      <p className="text-white text-sm mt-4">
+        {updatedAt ? `Edited: ${formatDate(updatedAt)}` : `${formatDate(createdAt)}`}
+      </p>
       <Button
         size='sm'
         onClick={onDelete}
