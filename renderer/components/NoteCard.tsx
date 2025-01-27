@@ -13,7 +13,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ title, content, createdAt, updatedA
 
   return (
     <div
-      className="border border-gray-700 rounded-md p-4 mb-4 shadow-sm hover:border-gray-300 text-white relative group cursor-pointer transition duration-75"
+      className="border border-gray-700 rounded-md p-4 mb-4 shadow-sm hover:border-gray-500 text-white relative group cursor-pointer transition duration-75"
       onClick={onEdit} // Trigger edit mode on click
     >
       <h3 className="text-lg font-bold">{title}</h3>
