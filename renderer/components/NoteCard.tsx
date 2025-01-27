@@ -1,6 +1,5 @@
 import React from 'react';
 import { NoteCardProps } from '../types';
-import Button from './Button';
 
 const NoteCard: React.FC<NoteCardProps> = ({ title, content, createdAt, updatedAt, onDelete, onEdit }) => {
   return (
@@ -13,18 +12,18 @@ const NoteCard: React.FC<NoteCardProps> = ({ title, content, createdAt, updatedA
       </p>
       <p className="text-gray-500 text-sm mt-4">Created: {new Date(createdAt).toLocaleString()}</p>
       <p className="text-gray-500 text-sm">Updated: {new Date(updatedAt).toLocaleString()}</p>
-      <Button
+      <button
         onClick={onDelete}
-        className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md"
+        className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
       >
         Delete
-      </Button>
-      <Button
+      </button>
+      <button
         onClick={onEdit}
-        className="mt-4 bg-yellow-500 text-white px-4 py-2 rounded-md"
+        className="mt-4 bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600"
       >
         Edit
-      </Button>
+      </button>
 
     </div>
   );
