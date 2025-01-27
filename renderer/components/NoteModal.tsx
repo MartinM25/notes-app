@@ -32,6 +32,8 @@ const NoteModal: FC<NoteModalProps> = ({
     }
   };
 
+  const isSaveDisabled = title.trim() === ''; // Disable Save if title is empty
+
   return (
     <Transition appear show={isOpen}>
       <Dialog as="div" className="relative z-10 focus:outline-none border-gray-500" onClose={onClose}>
@@ -89,8 +91,13 @@ const NoteModal: FC<NoteModalProps> = ({
                   </Button>
                   <Button
                     size="md"
-                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600"
+                    className={`inline-flex justify-center rounded-md border border-transparent ${
+                      isSaveDisabled
+                        ? 'bg-gray-400 cursor-not-allowed'
+                        : 'bg-blue-500 hover:bg-blue-600'
+                    } px-4 py-2 text-sm font-medium text-white`}
                     onClick={handleSave}
+                    disabled={isSaveDisabled} // Disable the button if title is empty
                   >
                     Save
                   </Button>
