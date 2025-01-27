@@ -1,6 +1,6 @@
-import React, { Fragment } from 'react';
+import { useState, useEffect, FC } from 'react';
+import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react';
 import Button from './Button';
-import { Dialog, Transition } from '@headlessui/react';
 
 type NoteModalProps = {
   isOpen: boolean;
@@ -10,17 +10,17 @@ type NoteModalProps = {
   initialContent?: string;
 };
 
-const NoteModal: React.FC<NoteModalProps> = ({
+const NoteModal: FC<NoteModalProps> = ({
   isOpen,
   onClose,
   onSave,
   initialTitle = '',
   initialContent = '',
 }) => {
-  const [title, setTitle] = React.useState(initialTitle);
-  const [content, setContent] = React.useState(initialContent);
+  const [title, setTitle] = useState(initialTitle);
+  const [content, setContent] = useState(initialContent);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setTitle(initialTitle);
     setContent(initialContent);
   }, [initialTitle, initialContent]);
@@ -33,10 +33,9 @@ const NoteModal: React.FC<NoteModalProps> = ({
   };
 
   return (
-    <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={onClose}>
-        <Transition.Child
-          as={Fragment}
+    <Transition appear show={isOpen}>
+      <Dialog as="div" className="relative z-10 focus:outline-none border-gray-500" onClose={onClose}>
+        <TransitionChild
           enter="ease-out duration-300"
           enterFrom="opacity-0"
           enterTo="opacity-100"
@@ -44,13 +43,12 @@ const NoteModal: React.FC<NoteModalProps> = ({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black bg-opacity-30" />
-        </Transition.Child>
+          <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur" aria-hidden="true" />
+        </TransitionChild>
 
         <div className="fixed inset-0 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center">
-            <Transition.Child
-              as={Fragment}
+            <TransitionChild
               enter="ease-out duration-300"
               enterFrom="opacity-0 scale-95"
               enterTo="opacity-100 scale-100"
@@ -58,13 +56,13 @@ const NoteModal: React.FC<NoteModalProps> = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                <Dialog.Title
+              <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl p-6 text-left align-middle shadow-xl transition-all bg-white">
+                <DialogTitle
                   as="h3"
                   className="text-lg font-medium leading-6 text-gray-900"
                 >
                   {initialTitle ? 'Edit Note' : 'Add Note'}
-                </Dialog.Title>
+                </DialogTitle>
                 <div className="mt-4">
                   <input
                     type="text"
@@ -83,22 +81,22 @@ const NoteModal: React.FC<NoteModalProps> = ({
 
                 <div className="mt-6 flex justify-end space-x-2">
                   <Button
-                    size='md'
+                    size="md"
                     className="inline-flex justify-center rounded-md border border-transparent bg-gray-500 px-4 py-2 text-sm font-medium text-white hover:bg-gray-600"
                     onClick={onClose}
                   >
                     Cancel
                   </Button>
                   <Button
-                    size='md'
+                    size="md"
                     className="inline-flex justify-center rounded-md border border-transparent bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600"
                     onClick={handleSave}
                   >
                     Save
                   </Button>
                 </div>
-              </Dialog.Panel>
-            </Transition.Child>
+              </DialogPanel>
+            </TransitionChild>
           </div>
         </div>
       </Dialog>
