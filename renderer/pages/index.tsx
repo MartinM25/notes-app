@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Note } from '../types';
 import NoteCard from '../components/NoteCard';
 import NoteModal from '../components/NoteModal';
+import {PlusIcon} from '@heroicons/react/24/outline';
+import Button from '../components/Button';
 
 const Home: React.FC = () => {
   const [notes, setNotes] = useState<Note[]>([]);
@@ -15,7 +17,7 @@ const Home: React.FC = () => {
     };
     fetchNotes();
   }, []);
-
+  
   const saveNotesToFile = (updatedNotes: Note[]) => {
     window.ipc.saveNotes(updatedNotes);
     setNotes(updatedNotes);
@@ -62,12 +64,13 @@ const Home: React.FC = () => {
   return (
     <div className="p-8 min-h-screen text-white">
       <h1 className="text-3xl font-bold mb-6">Notes App</h1>
-      <button
+      <Button
+        size='md'
         onClick={handleAddNote}
-        className="bg-blue-500 text-white px-4 py-2 rounded-md mb-4 hover:bg-blue-600"
+        className="text-white px-2 py-2 rounded-full mb-4"
       >
-        Add Note
-      </button>
+        <PlusIcon className="size-6" />
+      </Button>
       <div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 space-x-4'>
         {notes.map((note) => (
           <NoteCard

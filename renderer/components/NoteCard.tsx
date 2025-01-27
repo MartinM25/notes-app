@@ -1,6 +1,7 @@
 import React from 'react';
 import { NoteCardProps } from '../types';
 import Button from './Button';
+import { TrashIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 
 const NoteCard: React.FC<NoteCardProps> = ({ title, content, createdAt, updatedAt, onDelete, onEdit }) => {
   const formatDate = (date: string) => {
@@ -14,7 +15,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ title, content, createdAt, updatedA
   return (
     <div
       className="border border-gray-700 rounded-md p-4 mb-4 shadow-sm hover:border-gray-500 text-white relative group cursor-pointer transition duration-75"
-      onClick={onEdit} // Trigger edit mode on click
+      onClick={onEdit}
     >
       <h3 className="text-lg font-bold">{title}</h3>
       <p className="text-gray-600 mt-2">{content}</p>
@@ -29,14 +30,14 @@ const NoteCard: React.FC<NoteCardProps> = ({ title, content, createdAt, updatedA
           onClick={onDelete}
           className="bg-red-500 px-4 py-2 rounded-md hover:bg-red-600"
         >
-          Delete
+          <TrashIcon className="size-6" />
         </Button>
         <Button
           size="sm"
           onClick={onEdit}
           className="bg-yellow-500 px-4 py-2 rounded-md hover:bg-yellow-600 mt-2"
         >
-          Edit
+          <PencilSquareIcon className="size-6" />
         </Button>
       </div>
     </div>

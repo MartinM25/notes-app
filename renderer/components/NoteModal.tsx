@@ -1,6 +1,7 @@
 import { useState, useEffect, FC } from 'react';
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react';
 import Button from './Button';
+import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 type NoteModalProps = {
   isOpen: boolean;
@@ -87,7 +88,7 @@ const NoteModal: FC<NoteModalProps> = ({
                     className="inline-flex justify-center rounded-md border border-transparent bg-gray-500 px-4 py-2 text-sm font-medium text-white hover:bg-gray-600"
                     onClick={onClose}
                   >
-                    Cancel
+                    <XMarkIcon className="size-6" />
                   </Button>
                   <Button
                     size="md"
@@ -99,7 +100,7 @@ const NoteModal: FC<NoteModalProps> = ({
                     onClick={handleSave}
                     disabled={isSaveDisabled} // Disable the button if title is empty
                   >
-                    Save
+                    <CheckIcon className="size-6" />
                   </Button>
                 </div>
               </DialogPanel>
