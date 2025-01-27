@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import NoteCard from '../components/NoteCard';
 
-type Note = {
-  id: string;
-  title: string;
-  content: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import { Note } from '../types';
+import NoteCard from '../components/NoteCard';
 
 const Home: React.FC = () => {
   const [notes, setNotes] = useState<Note[]>([]);

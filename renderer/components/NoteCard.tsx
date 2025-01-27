@@ -1,13 +1,5 @@
 import React from 'react';
-
-type NoteCardProps = {
-  title: string;
-  content: string;
-  createdAt: string;
-  updatedAt: string;
-  onEdit: () => void;
-  onDelete: () => void;
-};
+import { NoteCardProps } from '../types';
 
 const NoteCard: React.FC<NoteCardProps> = ({ title, content, createdAt, updatedAt, onDelete, onEdit }) => {
   return (
