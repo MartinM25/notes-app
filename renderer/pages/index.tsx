@@ -17,24 +17,33 @@ const Home: React.FC = () => {
   // Function to generate a unique ID
   const generateId = () => crypto.randomUUID();
 
-  // Load notes from localStorage when the app starts
+  // Load notes from JSON file using IPC when the app starts
   useEffect(() => {
-    const savedNotes = localStorage.getItem('notes');
-    if (savedNotes) {
-      setNotes(JSON.parse(savedNotes));
-    }
+    window.ipc.getNotes()
+      .then((loadedNotes: Note[]) => {
+        setNotes(loadedNotes);
+      })
+      .catch((error) => {
+        console.error('Failed to load notes:', error);
+        alert('Failed to load notes. Please try again.');
+      });
   }, []);
 
-  // Save notes to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem('notes', JSON.stringify(notes));
-  }, [notes]);
+  // Save notes to the JSON file using IPC
+  const saveNotesToFile = (updatedNotes: Note[]) => {
+    window.ipc.saveNotes(updatedNotes)
+      .then(() => setNotes(updatedNotes))
+      .catch((error) => {
+        console.error('Failed to save notes:', error);
+        alert('Failed to save notes. Please try again.');
+      });
+  };
 
   // Add a new note
   const addNote = () => {
     if (newNote.title && newNote.content) {
       const now = new Date().toISOString();
-      setNotes([
+      const updatedNotes = [
         ...notes,
         {
           id: generateId(),
@@ -43,31 +52,27 @@ const Home: React.FC = () => {
           createdAt: now,
           updatedAt: now,
         },
-      ]);
-      setNewNote({ title: '', content: '' }); // Clear form
+      ];
+      saveNotesToFile(updatedNotes);
+      setNewNote({ title: '', content: '' });
     }
   };
 
   // Delete a note
   const deleteNote = (id: string) => {
-    setNotes(notes.filter((note) => note.id !== id));
+    const updatedNotes = notes.filter((note) => note.id !== id);
+    saveNotesToFile(updatedNotes);
   };
 
   // Save an edited note
   const saveNote = () => {
     if (editNote) {
-      setNotes(
-        notes.map((note) =>
-          note.id === editNote.id
-            ? {
-                ...note,
-                title: editNote.title,
-                content: editNote.content,
-                updatedAt: new Date().toISOString(),
-              }
-            : note
-        )
+      const updatedNotes = notes.map((note) =>
+        note.id === editNote.id
+          ? { ...note, title: editNote.title, content: editNote.content, updatedAt: new Date().toISOString() }
+          : note
       );
+      saveNotesToFile(updatedNotes);
       setEditNote(null);
     }
   };
