@@ -1,7 +1,10 @@
-import { useState, useEffect, FC } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react';
-import Button from './Button';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import Button from './Button';
+import 'quill/dist/quill.snow.css';
+
+let Quill: any; // Declare Quill without importing it directly
 
 type NoteModalProps = {
   isOpen: boolean;
@@ -11,7 +14,7 @@ type NoteModalProps = {
   initialContent?: string;
 };
 
-const NoteModal: FC<NoteModalProps> = ({
+const NoteModal: React.FC<NoteModalProps> = ({
   isOpen,
   onClose,
   onSave,
@@ -19,14 +22,57 @@ const NoteModal: FC<NoteModalProps> = ({
   initialContent = '',
 }) => {
   const [title, setTitle] = useState(initialTitle);
-  const [content, setContent] = useState(initialContent);
+  const [isQuillReady, setIsQuillReady] = useState(false); // Track Quill initialization
+  const quillRef = useRef<HTMLDivElement>(null);
+  const quillInstanceRef = useRef<any>(null);
 
   useEffect(() => {
-    setTitle(initialTitle);
-    setContent(initialContent);
-  }, [initialTitle, initialContent]);
+    const loadQuill = async () => {
+      if (!Quill) {
+        const QuillModule = await import('quill');
+        Quill = QuillModule.default;
+      }
+      setIsQuillReady(true); // Mark Quill as ready once loaded
+    };
+
+    if (isOpen) {
+      loadQuill();
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (isQuillReady && isOpen && quillRef.current) {
+      // Initialize Quill editor
+      quillInstanceRef.current = new Quill(quillRef.current, {
+        theme: 'snow',
+        placeholder: 'Content',
+        modules: {
+          toolbar: [
+            ['bold', 'italic', 'underline', 'strike'], // Formatting buttons
+            [{ header: 1 }, { header: 2 }], // Header styles
+            [{ list: 'ordered' }, { list: 'bullet' }], // Lists
+            ['link', 'image'], // Link and image insertion
+            ['clean'], // Remove formatting
+          ],
+        },
+      });
+
+      // Set the initial content in the editor
+      if (initialContent) {
+        quillInstanceRef.current.root.innerHTML = initialContent;
+      }
+    }
+
+    return () => {
+      // Clean up Quill instance when the modal closes
+      if (quillInstanceRef.current) {
+        quillInstanceRef.current = null;
+      }
+    };
+  }, [isQuillReady, isOpen, initialContent]);
 
   const handleSave = () => {
+    const content = quillInstanceRef.current?.root.innerHTML || '';
     if (title.trim() && content.trim()) {
       onSave(title, content);
       onClose();
@@ -74,12 +120,16 @@ const NoteModal: FC<NoteModalProps> = ({
                     onChange={(e) => setTitle(e.target.value)}
                     className="border border-gray-300 rounded-md p-2 w-full mb-4 text-gray-950"
                   />
-                  <textarea
-                    placeholder="Content"
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                    className="border border-gray-300 rounded-md p-2 w-full h-24 text-gray-950"
-                  />
+                  {isQuillReady ? (
+                    <div
+                      ref={quillRef}
+                      className="border border-gray-300 rounded-md p-2 w-full h-48 bg-white text-gray-950"
+                    ></div>
+                  ) : (
+                    <div className="flex items-center justify-center h-48 border border-gray-300 rounded-md p-2 bg-gray-100">
+                      <span className="text-gray-500">Loading editor...</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="mt-6 flex justify-end space-x-2">
