@@ -4,7 +4,7 @@ import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import Button from './Button';
 import 'quill/dist/quill.snow.css';
 
-let Quill: any; // Declare Quill without importing it directly
+let Quill: any;
 
 type NoteModalProps = {
   isOpen: boolean;
@@ -22,54 +22,63 @@ const NoteModal: React.FC<NoteModalProps> = ({
   initialContent = '',
 }) => {
   const [title, setTitle] = useState(initialTitle);
-  const [isQuillReady, setIsQuillReady] = useState(false); // Track Quill initialization
   const quillRef = useRef<HTMLDivElement>(null);
   const quillInstanceRef = useRef<any>(null);
 
   useEffect(() => {
-    const loadQuill = async () => {
-      if (!Quill) {
-        const QuillModule = await import('quill');
-        Quill = QuillModule.default;
-      }
-      setIsQuillReady(true); // Mark Quill as ready once loaded
-    };
-
+    // Initialize Quill every time the modal is opened
     if (isOpen) {
-      loadQuill();
-    }
-  }, [isOpen]);
+      (async () => {
+        if (!Quill) {
+          const QuillModule = await import('quill');
+          Quill = QuillModule.default;
+        }
 
-  useEffect(() => {
-    if (isQuillReady && isOpen && quillRef.current) {
-      // Initialize Quill editor
-      quillInstanceRef.current = new Quill(quillRef.current, {
-        theme: 'snow',
-        placeholder: 'Content',
-        modules: {
-          toolbar: [
-            ['bold', 'italic', 'underline', 'strike'], // Formatting buttons
-            [{ header: 1 }, { header: 2 }], // Header styles
-            [{ list: 'ordered' }, { list: 'bullet' }], // Lists
-            ['link', 'image'], // Link and image insertion
-            ['clean'], // Remove formatting
-          ],
-        },
-      });
+        if (quillRef.current && !quillInstanceRef.current) {
+          quillInstanceRef.current = new Quill(quillRef.current, {
+            theme: 'snow',
+            placeholder: 'Content',
+            modules: {
+              toolbar: [
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ header: 1 }, { header: 2 }],
+                [{ list: 'ordered' }, { list: 'bullet' }],
+                ['link', 'image'],
+                ['clean'],
+              ],
+            },
+          });
 
-      // Set the initial content in the editor
-      if (initialContent) {
-        quillInstanceRef.current.root.innerHTML = initialContent;
+          // Set initial content if available
+          if (initialContent) {
+            quillInstanceRef.current.root.innerHTML = initialContent;
+          }
+        } else if (quillInstanceRef.current) {
+          // If Quill instance already exists, update the content
+          quillInstanceRef.current.root.innerHTML = initialContent;
+        }
+      })();
+    } else {
+      // Cleanup Quill when modal is closed
+      if (quillInstanceRef.current) {
+        quillInstanceRef.current = null;
       }
     }
 
     return () => {
-      // Clean up Quill instance when the modal closes
-      if (quillInstanceRef.current) {
+      // Ensure cleanup if component is unmounted or modal closes
+      if (!isOpen && quillInstanceRef.current) {
         quillInstanceRef.current = null;
       }
     };
-  }, [isQuillReady, isOpen, initialContent]);
+  }, [isOpen, initialContent]);
+
+  useEffect(() => {
+    // Reset title and content when modal opens to prevent old data from showing
+    if (isOpen) {
+      setTitle('');
+    }
+  }, [isOpen]);
 
   const handleSave = () => {
     const content = quillInstanceRef.current?.root.innerHTML || '';
@@ -79,7 +88,7 @@ const NoteModal: React.FC<NoteModalProps> = ({
     }
   };
 
-  const isSaveDisabled = title.trim() === ''; // Disable Save if title is empty
+  const isSaveDisabled = title.trim() === '';
 
   return (
     <Transition appear show={isOpen}>
@@ -105,7 +114,7 @@ const NoteModal: React.FC<NoteModalProps> = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl p-6 text-left align-middle shadow-xl transition-all bg-white">
+              <DialogPanel className="w-full max-w-2xl transform overflow-hidden rounded-2xl p-6 text-left align-middle shadow-xl transition-all bg-white">
                 <DialogTitle
                   as="h3"
                   className="text-lg font-medium leading-6 text-gray-900"
@@ -120,16 +129,10 @@ const NoteModal: React.FC<NoteModalProps> = ({
                     onChange={(e) => setTitle(e.target.value)}
                     className="border border-gray-300 rounded-md p-2 w-full mb-4 text-gray-950"
                   />
-                  {isQuillReady ? (
-                    <div
-                      ref={quillRef}
-                      className="border border-gray-300 rounded-md p-2 w-full h-48 bg-white text-gray-950"
-                    ></div>
-                  ) : (
-                    <div className="flex items-center justify-center h-48 border border-gray-300 rounded-md p-2 bg-gray-100">
-                      <span className="text-gray-500">Loading editor...</span>
-                    </div>
-                  )}
+                  <div
+                    ref={quillRef}
+                    className="border border-gray-300 rounded-md p-2 w-full h-64 bg-white text-gray-950"
+                  ></div>
                 </div>
 
                 <div className="mt-6 flex justify-end space-x-2">
@@ -142,13 +145,9 @@ const NoteModal: React.FC<NoteModalProps> = ({
                   </Button>
                   <Button
                     size="md"
-                    className={`inline-flex justify-center rounded-md border border-transparent ${
-                      isSaveDisabled
-                        ? 'bg-gray-400 cursor-not-allowed'
-                        : 'bg-blue-500 hover:bg-blue-600'
-                    } px-4 py-2 text-sm font-medium text-white`}
+                    className={`inline-flex justify-center rounded-md border border-transparent ${isSaveDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'} px-4 py-2 text-sm font-medium text-white`}
                     onClick={handleSave}
-                    disabled={isSaveDisabled} // Disable the button if title is empty
+                    disabled={isSaveDisabled}
                   >
                     <CheckIcon className="size-6" />
                   </Button>

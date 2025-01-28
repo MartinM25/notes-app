@@ -15,10 +15,15 @@ const NoteCard: React.FC<NoteCardProps> = ({ title, content, createdAt, updatedA
   return (
     <div
       className="border border-gray-700 rounded-md p-4 mb-4 shadow-sm hover:border-gray-500 text-white relative group cursor-pointer transition duration-75"
-      onClick={onEdit}
     >
       <h3 className="text-lg font-bold">{title}</h3>
-      <p className="text-gray-600 mt-2">{content}</p>
+
+      {/* Render content as HTML to preserve formatting */}
+      <div
+        className="text-gray-600 mt-2"
+        dangerouslySetInnerHTML={{ __html: content }}
+      />
+
       <p className="text-sm mt-4">
         {updatedAt ? `Edited: ${formatDate(updatedAt)}` : `${formatDate(createdAt)}`}
       </p>
