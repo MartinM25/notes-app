@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Note } from '../types';
+import { PlusIcon } from '@heroicons/react/24/outline';
 import NoteCard from '../components/NoteCard';
 import NoteModal from '../components/NoteModal';
-import {PlusIcon} from '@heroicons/react/24/outline';
 import Button from '../components/Button';
 
 const Home: React.FC = () => {
@@ -63,7 +63,7 @@ const Home: React.FC = () => {
 
   return (
     <div className="p-8 min-h-screen text-white">
-      <h1 className="text-3xl font-bold mb-6">Notes App</h1>
+      <h1 className="text-3xl font-bold mb-6">Notes</h1>
       <Button
         size='md'
         onClick={handleAddNote}
