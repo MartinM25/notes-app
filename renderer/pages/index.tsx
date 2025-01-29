@@ -3,8 +3,9 @@ import { Note } from '../types';
 import Button from '../components/Button';
 import { PlusIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import 'quill/dist/quill.snow.css';
+import NoteCard from '../components/NoteCard';
 
-let Quill: any; // Declare Quill without importing directly
+let Quill: any;
 
 const Home: React.FC = () => {
   const [notes, setNotes] = useState<Note[]>([]);
@@ -13,8 +14,15 @@ const Home: React.FC = () => {
   const quillRef = useRef<HTMLDivElement | null>(null);
   const quillInstance = useRef<any>(null);
   const [isQuillReady, setIsQuillReady] = useState(false);
-  const [title, setTitle] = useState<string>(''); // Manage title input
-  const [searchTerm, setSearchTerm] = useState<string>(''); // Manage search term
+  const [title, setTitle] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string>('');
+
+  useEffect(() => {
+    window.ipc.getNotes().then((fetchedNotes) => {
+      setNotes(fetchedNotes);
+    });
+  }, []);
+
 
   useEffect(() => {
     const loadQuill = async () => {
@@ -22,7 +30,7 @@ const Home: React.FC = () => {
         const QuillModule = await import('quill');
         Quill = QuillModule.default;
       }
-      setIsQuillReady(true); // Mark Quill as ready once loaded
+      setIsQuillReady(true);
     };
 
     if (modalOpen) {
@@ -42,14 +50,13 @@ const Home: React.FC = () => {
       if (!quillInstance.current) {
         quillInstance.current = new Quill(quillRef.current, {
           theme: 'snow',
-          placeholder: 'Content',
+          placeholder: '',
           modules: {
             toolbar: [
-              ['bold', 'italic', 'underline', 'strike'], // Formatting buttons
-              [{ header: 1 }, { header: 2 }], // Header styles
-              [{ list: 'ordered' }, { list: 'bullet' }], // Lists
-              ['link', 'image'], // Link and image insertion
-              ['clean'], // Remove formatting
+              ['bold', 'italic', 'underline', 'strike'],
+              [{ header: 1 }, { header: 2 }],
+              [{ list: 'ordered' }, { list: 'bullet' }],
+              ['clean'],
             ],
           },
         });
@@ -57,7 +64,7 @@ const Home: React.FC = () => {
         // If editing, set the initial content in the editor
         if (editNote && editNote.content) {
           quillInstance.current.root.innerHTML = editNote.content;
-          setTitle(editNote.title); // Set the title when editing
+          setTitle(editNote.title);
         }
       }
     }
@@ -93,7 +100,7 @@ const Home: React.FC = () => {
 
   const handleAddNote = () => {
     setEditNote(null);
-    setTitle(''); // Reset title when adding a new note
+    setTitle('');
     setModalOpen(true);
   };
 
@@ -157,11 +164,15 @@ const Home: React.FC = () => {
           ) : (
             <div className="space-y-4">
               {filteredNotes.map((note) => (
-                <div key={note.id}>
-                  <div>{note.title}</div>
-                  <button onClick={() => handleEditNote(note)}>Edit</button>
-                  <button onClick={() => handleDeleteNote(note.id)}>Delete</button>
-                </div>
+                <NoteCard
+                  key={note.id}
+                  title={note.title}
+                  content={note.content}
+                  createdAt={note.createdAt}
+                  updatedAt={note.updatedAt}
+                  onEdit={() => handleEditNote(note)}
+                  onDelete={() => handleDeleteNote(note.id)}
+                />
               ))}
             </div>
           )}
@@ -170,17 +181,17 @@ const Home: React.FC = () => {
         {/* Right Side: Editor */}
         <div className="w-full md:w-2/3 lg:w-3/4 pl-8">
           {modalOpen && (
-            <div>
+            <div className='h-full'>
               <h2 className="text-2xl mb-4">{editNote ? 'Edit Note' : 'Create Note'}</h2>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Title"
-                className="w-full p-2 border border-gray-300 rounded-md mb-4"
+                className="w-full p-2 border border-gray-300 rounded-md mb-4 text-gray-950"
               />
               {isQuillReady ? (
-                <div ref={quillRef} className="h-96"></div>
+                <div ref={quillRef} className="h-screen"></div>
               ) : (
                 <div className="flex items-center justify-center h-96 border border-gray-300 rounded-md p-2 bg-gray-100">
                   <span className="text-gray-500">Loading editor...</span>
@@ -198,9 +209,8 @@ const Home: React.FC = () => {
                   size="md"
                   onClick={handleSave}
                   disabled={isSaveDisabled}
-                  className={`${
-                    isSaveDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500'
-                  } text-white`}
+                  className={`${isSaveDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500'
+                    } text-white`}
                 >
                   <CheckIcon className="size-5" />
                 </Button>
