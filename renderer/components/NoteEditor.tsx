@@ -3,6 +3,7 @@ import { Note } from '../types';
 import Button from './Button';
 import { CheckIcon, XMarkIcon, TrashIcon } from '@heroicons/react/24/outline';
 import 'quill/dist/quill.snow.css';
+import ConfirmDeleteModal from './ConfirmDeleteModal'; // Import the ConfirmDeleteModal
 
 let Quill: any;
 
@@ -18,6 +19,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ note, onSave, onCancel, onDelet
   const quillRef = useRef<HTMLDivElement | null>(null);
   const quillInstance = useRef<any>(null);
   const [isQuillReady, setIsQuillReady] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // State for managing modal visibility
 
   useEffect(() => {
     setTitle(note?.title || ''); // Update title when switching notes
@@ -61,6 +63,13 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ note, onSave, onCancel, onDelet
     }
   };
 
+  const handleDelete = () => {
+    if (onDelete) {
+      onDelete();
+    }
+    setIsDeleteModalOpen(false); // Close modal after deletion
+  };
+
   return (
     <div className="h-[200px]">
       <h2 className="text-2xl mb-4">{note ? 'Edit Note' : 'Create Note'}</h2>
@@ -80,17 +89,25 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ note, onSave, onCancel, onDelet
       )}
       <div className="mt-4 flex justify-end space-x-4">
         {note && onDelete && (
-          <Button size="md" onClick={onDelete} className="bg-red-500 text-white">
-            <TrashIcon className="size-5" />
+          <Button onClick={() => setIsDeleteModalOpen(true)} className="bg-red-500 text-white px-4 py-2 rounded-md flex items-center gap-2">
+            <TrashIcon className="w-5 h-5" />
+            Delete
           </Button>
         )}
-        <Button size="md" onClick={onCancel} className="bg-gray-500 text-white">
-          <XMarkIcon className="size-5" />
+        <Button onClick={onCancel} className="bg-gray-500 text-white px-4 py-2 rounded-md">
+          <XMarkIcon className="w-5 h-5" />
         </Button>
-        <Button size="md" onClick={handleSave} disabled={!title.trim() || !quillInstance.current?.root.innerHTML.trim()} className="bg-blue-500 text-white">
-          <CheckIcon className="size-5" />
+        <Button onClick={handleSave} disabled={!title.trim() || !quillInstance.current?.root.innerHTML.trim()} className="bg-blue-500 text-white px-4 py-2 rounded-md">
+          <CheckIcon className="w-5 h-5" />
         </Button>
       </div>
+
+      {/* Render the confirmation modal */}
+      <ConfirmDeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 };
