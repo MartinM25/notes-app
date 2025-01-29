@@ -94,10 +94,10 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ note, onSave, onCancel, onDelet
             Delete
           </Button>
         )}
-        <Button onClick={onCancel} className="bg-gray-500 text-white px-4 py-2 rounded-md">
+        <Button onClick={onCancel} className="bg-red text-white px-4 py-2 rounded-md">
           <XMarkIcon className="w-5 h-5" />
         </Button>
-        <Button onClick={handleSave} disabled={!title.trim() || !quillInstance.current?.root.innerHTML.trim()} className="bg-blue-500 text-white px-4 py-2 rounded-md">
+        <Button onClick={handleSave} disabled={!title.trim() || !quillInstance.current?.root.innerHTML.trim()} className="bg-green text-white px-4 py-2 rounded-md">
           <CheckIcon className="w-5 h-5" />
         </Button>
       </div>

@@ -11,7 +11,7 @@ interface ConfirmDeleteModalProps {
 const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({ isOpen, onClose, onConfirm }) => {
   return (
     <Dialog open={isOpen} onClose={onClose} className="relative z-10">
-      <div className="fixed inset-0 z-10 w-screen overflow-y-auto backdrop-blur-xl">
+      <div className="fixed inset-0 z-10 w-screen overflow-y-auto backdrop-blur-sm">
         <div className="flex min-h-full items-center justify-center p-4">
           <DialogPanel className="w-full max-w-md rounded-xl bg-white p-6 backdrop-blur-2xl">
             <DialogTitle className="text-xl font-semibold text-gray-900">
@@ -24,7 +24,7 @@ const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({ isOpen, onClose
               <Button onClick={onClose} className="bg-gray-500 text-white px-4 py-2 rounded-md">
                 Cancel
               </Button>
-              <Button onClick={onConfirm} className="bg-red-500 text-white px-4 py-2 rounded-md flex items-center gap-2">
+              <Button onClick={onConfirm} className="bg-red text-white px-4 py-2 rounded-md flex items-center gap-2">
                 <TrashIcon className="w-5 h-5" />
                 Delete
               </Button>
