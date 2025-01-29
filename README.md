@@ -63,19 +63,16 @@ to run the app as a standalone desktop application.
 
 ### Frontend ( /frontend )
 
-```
-/components/ : Contains all reusable components, such as Button, NoteCard,
-SearchBar, etc.
-/pages/ : React pages for the main views like the homepage and editor.
-/styles/ : TailwindCSS configuration and styles.
-/utils/ : Helper functions for managing data and handling API calls.
-```
+
+- **/components/** : Contains all reusable components, such as Button, NoteCard,SearchBar, etc.
+- **/pages/** : React pages for the main views like the homepage and editor.
+- **/styles/** : TailwindCSS configuration and styles.
+
 ### Electron ( /electron )
 
-```
-- background.ts : The main process for Electron that initializes the app window, handles system-level features (e.g., file saving/loading), and manages app lifecycle events.
-- /app : Handles rendering the main UI of the app and bridges the frontend with the backend.
-```
+- **background.ts** : The main process for Electron that initializes the app window, handles system-level features (e.g., file saving/loading), and manages app lifecycle events.
+- **/app** : Handles rendering the main UI of the app and bridges the frontend with the backend.
+
 ### Data Persistence
 
 The app uses Electron’s fs module to read and write notes from a local file system, ensuring that notes are saved and reloaded when the app restarts.
