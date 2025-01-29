@@ -23,22 +23,26 @@ const Home: React.FC = () => {
 
   const handleSaveNote = (title: string, content: string) => {
     if (editNote) {
+      // If editing an existing note, update it
       const updatedNotes = notes.map((note) =>
         note.id === editNote.id ? { ...note, title, content, updatedAt: new Date().toISOString() } : note
       );
       saveNotesToFile(updatedNotes);
-      setEditNote(null);
     } else {
+      // If creating a new note, add it to the list
       const newNote: Note = {
         id: crypto.randomUUID(),
-        title,
+        title: title || "Untitled Note",
         content,
         createdAt: new Date().toISOString(),
         updatedAt: null,
       };
-      saveNotesToFile([...notes, newNote]);
+      const updatedNotes = [...notes, newNote];
+      saveNotesToFile(updatedNotes);
     }
+    setEditNote(null); // Close editor after saving
   };
+
 
   const handleEditNote = (note: Note) => {
     setEditNote(note); // Automatically switches the editor to the new note
@@ -50,16 +54,35 @@ const Home: React.FC = () => {
     setEditNote(null);
   };
 
+  const handleNewNote = () => {
+    const newNote: Note = {
+      id: crypto.randomUUID(),
+      title: "",
+      content: "",
+      createdAt: new Date().toISOString(),
+      updatedAt: null,
+    };
+
+    // Add the new note to the list immediately
+    setNotes([...notes, newNote]);
+
+    // Set the note for editing
+    setEditNote(newNote);
+  };
+
+
   const filteredNotes = notes.filter((note) => note.title.toLowerCase().includes(searchTerm.toLowerCase()));
 
   return (
+    // Home Component
+
     <div className="p-8 min-h-screen text-white flex flex-col">
       {/* Top Bar */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">TakeNote</h1>
         <div className="flex space-x-4">
           <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-          <Button size="md" onClick={() => setEditNote(null)} className="text-white px-2 py-2 border rounded-full">
+          <Button size="md" onClick={handleNewNote} className="text-white px-2 py-2 border rounded-full">
             <PlusIcon className="size-5 pr-2" /> Note
           </Button>
         </div>
@@ -67,11 +90,12 @@ const Home: React.FC = () => {
 
       {/* Content */}
       <div className="flex flex-col md:flex-row">
-        <div className="w-full md:w-1/3 lg:w-1/4 mb-6 md:mb-0">
+        {/* Notes List */}
+        <div className="w-full md:w-1/3 lg:w-1/4 mb-6 md:mb-0 overflow-y-auto max-h-[calc(100vh-160px)]">
           {filteredNotes.length === 0 ? (
             <div className="text-center text-gray-400 mt-8">Create your first note.</div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-4 mr-6">
               {filteredNotes.map((note) => (
                 <NoteCard
                   key={note.id}
@@ -88,7 +112,7 @@ const Home: React.FC = () => {
         </div>
 
         {/* Note Editor */}
-        <div className="w-full md:w-2/3 lg:w-3/4 pl-8">
+        <div className="w-full md:w-2/3 lg:w-3/4 pl-8 h-[500px]">
           {editNote !== null && (
             <NoteEditor
               note={editNote}
@@ -100,6 +124,7 @@ const Home: React.FC = () => {
         </div>
       </div>
     </div>
+
   );
 };
 

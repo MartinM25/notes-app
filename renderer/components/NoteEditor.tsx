@@ -62,7 +62,7 @@ const NoteEditor: React.FC<NoteEditorProps> = ({ note, onSave, onCancel, onDelet
   };
 
   return (
-    <div className="h-full">
+    <div className="h-[200px]">
       <h2 className="text-2xl mb-4">{note ? 'Edit Note' : 'Create Note'}</h2>
       <input
         type="text"
